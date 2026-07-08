@@ -15,6 +15,8 @@ public:
 
     bool initDatabase();
 
+    bool addTask(const Task &task);
+
 private:
     QSqlDatabase m_db;
 };

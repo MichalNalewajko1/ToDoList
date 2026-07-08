@@ -29,7 +29,20 @@ bool DatabaseManager::initDatabase() {
         qDebug() << "Błąd podczas tworzenia tabeli:" << query.lastError().text();
         return false;
     }
+    return true;
+}
 
-    qDebug() << "Baza danych i tabela tasks zostały pomyślnie zainicjalizowane!";
+bool DatabaseManager::addTask(const Task &task) {
+    QSqlQuery query;
+    query.prepare("INSERT INTO tasks (title, is_completed) VALUES (:title, :completed)");
+
+    query.bindValue(":title", task.title);
+    query.bindValue(":completed", task.isCompleted ? 1 : 0);
+
+    if (!query.exec()) {
+        qDebug() << "Błąd podczas dodawania zadania do bazy:" << query.lastError().text();
+        return false;
+    }
+
     return true;
 }
