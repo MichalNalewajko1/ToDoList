@@ -46,3 +46,20 @@ bool DatabaseManager::addTask(const Task &task) {
 
     return true;
 }
+
+QVector<Task> DatabaseManager::getAllTasks() {
+    QVector<Task> tasks;
+
+    QSqlQuery query("SELECT id, title, description, is_completed FROM tasks");
+
+    while (query.next()) {
+        int id = query.value("id").toInt();
+        QString title = query.value("title").toString();
+        QString description = query.value("description").toString();
+        bool isCompleted = query.value("is_completed").toInt() == 1;
+
+        tasks.append(Task(id, title, description, isCompleted));
+    }
+
+    return tasks;
+}

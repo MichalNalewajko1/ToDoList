@@ -24,5 +24,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     DatabaseManager m_dbManager;
+    void refreshTaskList();
 };
 #endif // MAINWINDOW_H

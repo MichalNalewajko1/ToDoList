@@ -4,6 +4,7 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QVector>
 #include <QDebug>
 #include "../models/task.h"
 
@@ -16,6 +17,8 @@ public:
     bool initDatabase();
 
     bool addTask(const Task &task);
+
+    QVector<Task> getAllTasks();
 
 private:
     QSqlDatabase m_db;
