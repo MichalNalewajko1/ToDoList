@@ -13,7 +13,7 @@ DatabaseManager::~DatabaseManager() {
 
 bool DatabaseManager::initDatabase() {
     if (!m_db.open()) {
-        qDebug() << "Błąd: Nie można otworzyć bazy danych!" << m_db.lastError().text();
+        qDebug() << "Błąd: " << m_db.lastError().text();
         return false;
     }
 
