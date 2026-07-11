@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
         QMessageBox::critical(this, "Błąd krytyczny", "Nie udało się zainicjalizować bazy danych!");
     }
     connect(ui->btnAddTask, &QPushButton::clicked, this, &MainWindow::on_btnAddTask_clicked);
+    connect(ui->btnDeleteTask, &QPushButton::clicked, this, &MainWindow::on_btnDeleteTask_clicked);
     refreshTaskList();
 }
 MainWindow::~MainWindow()
@@ -40,6 +41,24 @@ void MainWindow::refreshTaskList() {
 
     QVector<Task> tasks = m_dbManager.getAllTasks();
     for (const Task &task : tasks) {
-        ui->listWidget->addItem(task.title);
+        QListWidgetItem *item = new QListWidgetItem(task.title);
+        item->setData(Qt::UserRole, task.id);
+        ui->listWidget->addItem(item);
     }
 }
+
+void MainWindow::on_btnDeleteTask_clicked()
+{
+    QListWidgetItem *selectedItem = ui->listWidget->currentItem();
+
+    if (!selectedItem) {
+        return;
+    }
+
+    int taskId = selectedItem->data(Qt::UserRole).toInt();
+
+    if (m_dbManager.deleteTask(taskId)) {
+        refreshTaskList();
+    }
+}
+

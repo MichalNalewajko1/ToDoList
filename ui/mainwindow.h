@@ -21,6 +21,8 @@ public:
 private slots:
     void on_btnAddTask_clicked();
 
+    void on_btnDeleteTask_clicked();
+
 private:
     Ui::MainWindow *ui;
     DatabaseManager m_dbManager;

@@ -18,6 +18,8 @@ public:
 
     bool addTask(const Task &task);
 
+    bool deleteTask(int id);
+
     QVector<Task> getAllTasks();
 
 private:

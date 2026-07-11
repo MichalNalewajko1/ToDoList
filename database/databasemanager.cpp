@@ -63,3 +63,15 @@ QVector<Task> DatabaseManager::getAllTasks() {
 
     return tasks;
 }
+
+bool DatabaseManager::deleteTask(int id){
+    QSqlQuery query;
+    query.prepare("DELETE FROM tasks WHERE id = :id");
+    query.bindValue(":id", id);
+
+    if(!query.exec()){
+        qDebug()<<"Błąd: "<<query.lastError().text();
+        return false;
+    }
+    return true;
+}
