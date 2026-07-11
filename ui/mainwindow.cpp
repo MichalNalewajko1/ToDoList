@@ -15,6 +15,45 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnDeleteTask, &QPushButton::clicked, this, &MainWindow::on_btnDeleteTask_clicked);
     connect(ui->btnCompleteTask, &QPushButton::clicked, this, &MainWindow::on_btnCompleteTask_clicked);
     refreshTaskList();
+
+    this->setStyleSheet(
+        "QMainWindow {"
+        "   background-color: #f4f5f7;"
+        "}"
+        "QLineEdit {"
+        "   padding: 8px;"
+        "   border: 1px solid #ced4da;"
+        "   border-radius: 4px;"
+        "   background-color: white;"
+        "   font-size: 14px;"
+        "}"
+        "QPushButton {"
+        "   background-color: #007bff;"
+        "   color: white;"
+        "   border: none;"
+        "   border-radius: 4px;"
+        "   padding: 8px 16px;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #0056b3;"
+        "}"
+        "QListWidget {"
+        "   background-color: white;"
+        "   border: 1px solid #ced4da;"
+        "   border-radius: 4px;"
+        "   padding: 4px;"
+        "   font-size: 14px;"
+        "}"
+        "QListWidget::item {"
+        "   padding: 8px;"
+        "   border-bottom: 1px solid #eee;"
+        "}"
+        "QListWidget::item:selected {"
+        "   background-color: #e2e6ea;"
+        "   color: black;"
+        "}"
+        );
 }
 MainWindow::~MainWindow()
 {
