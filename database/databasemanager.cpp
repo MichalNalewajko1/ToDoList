@@ -75,3 +75,15 @@ bool DatabaseManager::deleteTask(int id){
     }
     return true;
 }
+
+bool DatabaseManager::completeTask(int id){
+    QSqlQuery query;
+    query.prepare("UPDATE tasks SET is_completed = 1 WHERE id = :id");
+    query.bindValue(":id", id);
+
+    if(!query.exec()){
+        qDebug()<<"Blad: "<<query.lastError().text();
+        return false;
+    }
+    return true;
+}

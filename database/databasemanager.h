@@ -20,6 +20,8 @@ public:
 
     bool deleteTask(int id);
 
+    bool completeTask(int id);
+
     QVector<Task> getAllTasks();
 
 private:

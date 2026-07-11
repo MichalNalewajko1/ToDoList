@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     connect(ui->btnAddTask, &QPushButton::clicked, this, &MainWindow::on_btnAddTask_clicked);
     connect(ui->btnDeleteTask, &QPushButton::clicked, this, &MainWindow::on_btnDeleteTask_clicked);
+    connect(ui->btnCompleteTask, &QPushButton::clicked, this, &MainWindow::on_btnCompleteTask_clicked);
     refreshTaskList();
 }
 MainWindow::~MainWindow()
@@ -43,6 +44,12 @@ void MainWindow::refreshTaskList() {
     for (const Task &task : tasks) {
         QListWidgetItem *item = new QListWidgetItem(task.title);
         item->setData(Qt::UserRole, task.id);
+        if (task.isCompleted) {
+            QFont font = item->font();
+            font.setStrikeOut(true);
+            item->setFont(font);
+            item->setForeground(Qt::gray);
+        }
         ui->listWidget->addItem(item);
     }
 }
@@ -58,6 +65,22 @@ void MainWindow::on_btnDeleteTask_clicked()
     int taskId = selectedItem->data(Qt::UserRole).toInt();
 
     if (m_dbManager.deleteTask(taskId)) {
+        refreshTaskList();
+    }
+}
+
+
+void MainWindow::on_btnCompleteTask_clicked()
+{
+    QListWidgetItem *selectedItem = ui->listWidget->currentItem();
+
+    if (!selectedItem) {
+        return;
+    }
+
+    int taskId = selectedItem->data(Qt::UserRole).toInt();
+
+    if (m_dbManager.completeTask(taskId)) {
         refreshTaskList();
     }
 }

@@ -23,6 +23,8 @@ private slots:
 
     void on_btnDeleteTask_clicked();
 
+    void on_btnCompleteTask_clicked();
+
 private:
     Ui::MainWindow *ui;
     DatabaseManager m_dbManager;
