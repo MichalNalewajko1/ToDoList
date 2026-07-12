@@ -14,46 +14,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnAddTask, &QPushButton::clicked, this, &MainWindow::on_btnAddTask_clicked);
     connect(ui->btnDeleteTask, &QPushButton::clicked, this, &MainWindow::on_btnDeleteTask_clicked);
     connect(ui->btnCompleteTask, &QPushButton::clicked, this, &MainWindow::on_btnCompleteTask_clicked);
+    connect(ui->cbDarkMode, &QCheckBox::toggled, this, &MainWindow::on_cbDarkMode_toggled);
+    on_cbDarkMode_toggled(false);
     refreshTaskList();
-
-    this->setStyleSheet(
-        "QMainWindow {"
-        "   background-color: #f4f5f7;"
-        "}"
-        "QLineEdit {"
-        "   padding: 8px;"
-        "   border: 1px solid #ced4da;"
-        "   border-radius: 4px;"
-        "   background-color: white;"
-        "   font-size: 14px;"
-        "}"
-        "QPushButton {"
-        "   background-color: #007bff;"
-        "   color: white;"
-        "   border: none;"
-        "   border-radius: 4px;"
-        "   padding: 8px 16px;"
-        "   font-weight: bold;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: #0056b3;"
-        "}"
-        "QListWidget {"
-        "   background-color: white;"
-        "   border: 1px solid #ced4da;"
-        "   border-radius: 4px;"
-        "   padding: 4px;"
-        "   font-size: 14px;"
-        "}"
-        "QListWidget::item {"
-        "   padding: 8px;"
-        "   border-bottom: 1px solid #eee;"
-        "}"
-        "QListWidget::item:selected {"
-        "   background-color: #e2e6ea;"
-        "   color: black;"
-        "}"
-        );
 }
 MainWindow::~MainWindow()
 {
@@ -122,5 +85,53 @@ void MainWindow::on_btnCompleteTask_clicked()
     if (m_dbManager.completeTask(taskId)) {
         refreshTaskList();
     }
+}
+
+
+void MainWindow::on_cbDarkMode_toggled(bool checked)
+{
+    if (checked) {
+        // --- MOTYW CIEMNY ---
+        this->setStyleSheet(
+            "QMainWindow { background-color: #1e1e2e; }"
+            "QLabel, QCheckBox { color: #cdd6f4; }"
+            "QLineEdit {"
+            "   padding: 8px; border: 1px solid #45475a; border-radius: 4px;"
+            "   background-color: #313244; color: #cdd6f4; font-size: 14px;"
+            "}"
+            "QPushButton {"
+            "   background-color: #89b4fa; color: #1e1e2e; border: none;"
+            "   border-radius: 4px; padding: 8px 16px; font-weight: bold;"
+            "}"
+            "QPushButton:hover { background-color: #b4befe; }"
+            "QListWidget {"
+            "   background-color: #313244; border: 1px solid #45475a;"
+            "   border-radius: 4px; padding: 4px; font-size: 14px; color: #cdd6f4;"
+            "}"
+            "QListWidget::item { padding: 8px; border-bottom: 1px solid #45475a; }"
+            "QListWidget::item:selected { background-color: #45475a; color: #ffffff; }"
+            );
+    } else {
+        this->setStyleSheet(
+            "QMainWindow { background-color: #f4f5f7; }"
+            "QLabel, QCheckBox { color: #333333; }"
+            "QLineEdit {"
+            "   padding: 8px; border: 1px solid #ced4da; border-radius: 4px;"
+            "   background-color: white; color: black; font-size: 14px;"
+            "}"
+            "QPushButton {"
+            "   background-color: #007bff; color: white; border: none;"
+            "   border-radius: 4px; padding: 8px 16px; font-weight: bold;"
+            "}"
+            "QPushButton:hover { background-color: #0056b3; }"
+            "QListWidget {"
+            "   background-color: white; border: 1px solid #ced4da;"
+            "   border-radius: 4px; padding: 4px; font-size: 14px; color: black;"
+            "}"
+            "QListWidget::item { padding: 8px; border-bottom: 1px solid #eee; }"
+            "QListWidget::item:selected { background-color: #e2e6ea; color: black; }"
+            );
+    }
+
 }
 

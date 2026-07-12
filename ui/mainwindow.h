@@ -25,6 +25,8 @@ private slots:
 
     void on_btnCompleteTask_clicked();
 
+    void on_cbDarkMode_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     DatabaseManager m_dbManager;
