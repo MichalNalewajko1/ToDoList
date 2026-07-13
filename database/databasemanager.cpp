@@ -87,3 +87,16 @@ bool DatabaseManager::completeTask(int id){
     }
     return true;
 }
+
+bool DatabaseManager::updateTaskTitle(int id, const QString &newTitle) {
+    QSqlQuery query;
+    query.prepare("UPDATE tasks SET title = :title WHERE id = :id");
+    query.bindValue(":title", newTitle);
+    query.bindValue(":id", id);
+
+    if (!query.exec()) {
+        qDebug() << "Blad edycji zadania:" << query.lastError().text();
+        return false;
+    }
+    return true;
+}

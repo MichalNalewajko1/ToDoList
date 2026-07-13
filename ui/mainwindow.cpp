@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <QMessageBox>
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnDeleteTask, &QPushButton::clicked, this, &MainWindow::on_btnDeleteTask_clicked);
     connect(ui->btnCompleteTask, &QPushButton::clicked, this, &MainWindow::on_btnCompleteTask_clicked);
     connect(ui->cbDarkMode, &QCheckBox::toggled, this, &MainWindow::on_cbDarkMode_toggled);
+    connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MainWindow::onTaskDoubleClicked);
     on_cbDarkMode_toggled(false);
     refreshTaskList();
 }
@@ -91,7 +93,6 @@ void MainWindow::on_btnCompleteTask_clicked()
 void MainWindow::on_cbDarkMode_toggled(bool checked)
 {
     if (checked) {
-        // --- MOTYW CIEMNY ---
         this->setStyleSheet(
             "QMainWindow { background-color: #1e1e2e; }"
             "QLabel, QCheckBox { color: #cdd6f4; }"
@@ -135,3 +136,24 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
 
 }
 
+void MainWindow::onTaskDoubleClicked(QListWidgetItem *item) {
+    if (!item) {
+        return;
+    }
+
+    int taskId = item->data(Qt::UserRole).toInt();
+    QString currentTitle = item->text();
+    bool ok;
+    QString newTitle = QInputDialog::getText(this,
+                                             "Edycja zadania",
+                                             "Wprowadź nową treść zadania:",
+                                             QLineEdit::Normal,
+                                             currentTitle,
+                                             &ok);
+
+    if (ok && !newTitle.trimmed().isEmpty()) {
+        if (m_dbManager.updateTaskTitle(taskId, newTitle.trimmed())) {
+            refreshTaskList();
+        }
+    }
+}

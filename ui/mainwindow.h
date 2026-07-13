@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QListWidgetItem>
 #include "../database/databasemanager.h"
 
 QT_BEGIN_NAMESPACE
@@ -26,6 +27,8 @@ private slots:
     void on_btnCompleteTask_clicked();
 
     void on_cbDarkMode_toggled(bool checked);
+
+    void onTaskDoubleClicked(QListWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;

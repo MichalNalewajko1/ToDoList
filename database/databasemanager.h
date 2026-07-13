@@ -22,6 +22,8 @@ public:
 
     bool completeTask(int id);
 
+    bool updateTaskTitle(int id, const QString &newTitle);
+
     QVector<Task> getAllTasks();
 
 private:
