@@ -95,17 +95,21 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
     if (checked) {
         this->setStyleSheet(
             "QMainWindow { background-color: #1e1e2e; }"
-            "QLabel, QCheckBox { color: #cdd6f4; }"
-            "QLineEdit {"
+            "#cbDarkMode { color: #cdd6f4; }"
+            "#inputTaskTitle {"
             "   padding: 8px; border: 1px solid #45475a; border-radius: 4px;"
             "   background-color: #313244; color: #cdd6f4; font-size: 14px;"
             "}"
-            "QPushButton {"
+
+            // Stylizuje TYLKO trzy główne przyciski aplikacji
+            "#btnAddTask, #btnDeleteTask, #btnCompleteTask {"
             "   background-color: #89b4fa; color: #1e1e2e; border: none;"
             "   border-radius: 4px; padding: 8px 16px; font-weight: bold;"
             "}"
-            "QPushButton:hover { background-color: #b4befe; }"
-            "QListWidget {"
+            "#btnAddTask:hover, #btnDeleteTask:hover, #btnCompleteTask:hover {"
+            "   background-color: #b4befe;"
+            "}"
+            "#listWidget {"
             "   background-color: #313244; border: 1px solid #45475a;"
             "   border-radius: 4px; padding: 4px; font-size: 14px; color: #cdd6f4;"
             "}"
@@ -115,17 +119,22 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
     } else {
         this->setStyleSheet(
             "QMainWindow { background-color: #f4f5f7; }"
-            "QLabel, QCheckBox { color: #333333; }"
-            "QLineEdit {"
+            "#cbDarkMode { color: #333333; }"
+
+            "#inputTaskTitle {"
             "   padding: 8px; border: 1px solid #ced4da; border-radius: 4px;"
             "   background-color: white; color: black; font-size: 14px;"
             "}"
-            "QPushButton {"
+
+            "#btnAddTask, #btnDeleteTask, #btnCompleteTask {"
             "   background-color: #007bff; color: white; border: none;"
             "   border-radius: 4px; padding: 8px 16px; font-weight: bold;"
             "}"
-            "QPushButton:hover { background-color: #0056b3; }"
-            "QListWidget {"
+            "#btnAddTask:hover, #btnDeleteTask:hover, #btnCompleteTask:hover {"
+            "   background-color: #0056b3;"
+            "}"
+
+            "#listWidget {"
             "   background-color: white; border: 1px solid #ced4da;"
             "   border-radius: 4px; padding: 4px; font-size: 14px; color: black;"
             "}"
