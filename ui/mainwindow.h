@@ -55,6 +55,9 @@ private slots:
 
     void on_cbDarkMode_toggled(bool checked);
 
+    void on_inputSearch_textChanged(const QString &arg1);
+
+    void on_listView_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;

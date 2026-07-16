@@ -9,16 +9,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    if(!m_dbManager.initDatabase()){
-        QMessageBox::critical(this, "Błąd krytyczny", "Nie udało się zainicjalizować bazy danych!");
-    }
-    connect(ui->btnAddTask, &QPushButton::clicked, this, &MainWindow::on_btnAddTask_clicked);
-    connect(ui->btnDeleteTask, &QPushButton::clicked, this, &MainWindow::on_btnDeleteTask_clicked);
-    connect(ui->btnCompleteTask, &QPushButton::clicked, this, &MainWindow::on_btnCompleteTask_clicked);
-    connect(ui->cbDarkMode, &QCheckBox::toggled, this, &MainWindow::on_cbDarkMode_toggled);
-    connect(ui->listView, &QListWidget::itemDoubleClicked, this, &MainWindow::onTaskDoubleClicked);
-    on_cbDarkMode_toggled(false);
-    refreshTaskList();
+    m_dbManager.initDatabase();
+
+    m_model = new TaskModel(this);
+    m_model->setTable("tasks");
+    m_model->select();
+
+    m_proxyModel = new QSortFilterProxyModel(this);
+    m_proxyModel->setSourceModel(m_model);
+    m_proxyModel->setFilterKeyColumn(1);
+    m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+
+    ui->listView->setModel(m_proxyModel);
+    ui->listView->setModelColumn(1);
+
 }
 MainWindow::~MainWindow()
 {
@@ -36,59 +40,38 @@ void MainWindow::on_btnAddTask_clicked()
 
     if (m_dbManager.addTask(newTask)) {
         ui->inputTaskTitle->clear();
-
-        refreshTaskList();
-    }
-}
-
-void MainWindow::refreshTaskList() {
-    ui->listView->clear();
-
-    QVector<Task> tasks = m_dbManager.getAllTasks();
-    for (const Task &task : tasks) {
-        QListWidgetItem *item = new QListWidgetItem(task.title);
-        item->setData(Qt::UserRole, task.id);
-        if (task.isCompleted) {
-            QFont font = item->font();
-            font.setStrikeOut(true);
-            item->setFont(font);
-            item->setForeground(Qt::gray);
-        }
-        ui->listView->addItem(item);
-    }
-}
-
-void MainWindow::on_btnDeleteTask_clicked()
-{
-    QListWidgetItem *selectedItem = ui->listView->currentItem();
-
-    if (!selectedItem) {
-        return;
-    }
-
-    int taskId = selectedItem->data(Qt::UserRole).toInt();
-
-    if (m_dbManager.deleteTask(taskId)) {
-        refreshTaskList();
+        m_model->select();
     }
 }
 
 
-void MainWindow::on_btnCompleteTask_clicked()
-{
-    QListWidgetItem *selectedItem = ui->listView->currentItem();
+void MainWindow::on_btnCompleteTask_clicked() {
+    QModelIndex proxyIndex = ui->listView->currentIndex();
+    if (!proxyIndex.isValid()) return;
 
-    if (!selectedItem) {
-        return;
-    }
+    QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
 
-    int taskId = selectedItem->data(Qt::UserRole).toInt();
+    QModelIndex idIndex = m_model->index(sourceIndex.row(), 0);
+    int taskId = m_model->data(idIndex).toInt();
 
     if (m_dbManager.completeTask(taskId)) {
-        refreshTaskList();
+        m_model->select();
     }
 }
 
+void MainWindow::on_btnDeleteTask_clicked() {
+    QModelIndex proxyIndex = ui->listView->currentIndex();
+    if (!proxyIndex.isValid()) return;
+
+    QModelIndex sourceIndex = m_proxyModel->mapToSource(proxyIndex);
+
+    QModelIndex idIndex = m_model->index(sourceIndex.row(), 0);
+    int taskId = m_model->data(idIndex).toInt();
+
+    if (m_dbManager.deleteTask(taskId)) {
+        m_model->select();
+    }
+}
 
 void MainWindow::on_cbDarkMode_toggled(bool checked)
 {
@@ -100,8 +83,6 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
             "   padding: 8px; border: 1px solid #45475a; border-radius: 4px;"
             "   background-color: #313244; color: #cdd6f4; font-size: 14px;"
             "}"
-
-            // Stylizuje TYLKO trzy główne przyciski aplikacji
             "#btnAddTask, #btnDeleteTask, #btnCompleteTask {"
             "   background-color: #89b4fa; color: #1e1e2e; border: none;"
             "   border-radius: 4px; padding: 8px 16px; font-weight: bold;"
@@ -109,12 +90,12 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
             "#btnAddTask:hover, #btnDeleteTask:hover, #btnCompleteTask:hover {"
             "   background-color: #b4befe;"
             "}"
-            "#listWidget {"
+            "#listView {"
             "   background-color: #313244; border: 1px solid #45475a;"
             "   border-radius: 4px; padding: 4px; font-size: 14px; color: #cdd6f4;"
             "}"
-            "QListWidget::item { padding: 8px; border-bottom: 1px solid #45475a; }"
-            "QListWidget::item:selected { background-color: #45475a; color: #ffffff; }"
+            "QListView::item { padding: 8px; border-bottom: 1px solid #45475a; }"
+            "QListView::item:selected { background-color: #45475a; color: #ffffff; }"
             );
     } else {
         this->setStyleSheet(
@@ -134,35 +115,43 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
             "   background-color: #0056b3;"
             "}"
 
-            "#listWidget {"
+            "#listView {"
             "   background-color: white; border: 1px solid #ced4da;"
             "   border-radius: 4px; padding: 4px; font-size: 14px; color: black;"
             "}"
-            "QListWidget::item { padding: 8px; border-bottom: 1px solid #eee; }"
-            "QListWidget::item:selected { background-color: #e2e6ea; color: black; }"
+            "QListView::item { padding: 8px; border-bottom: 1px solid #eee; }"
+            "QListView::item:selected { background-color: #e2e6ea; color: black; }"
             );
     }
 
 }
 
-void MainWindow::onTaskDoubleClicked(QListWidgetItem *item) {
-    if (!item) {
-        return;
-    }
+void MainWindow::on_inputSearch_textChanged(const QString &arg1) {
+    m_proxyModel->setFilterFixedString(arg1);
+}
 
-    int taskId = item->data(Qt::UserRole).toInt();
-    QString currentTitle = item->text();
+void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
+{
+    if (!index.isValid()) return;
+
+    QModelIndex sourceIndex = m_proxyModel->mapToSource(index);
+
+
+    QModelIndex idIndex = m_model->index(sourceIndex.row(), 0);
+    QModelIndex titleIndex = m_model->index(sourceIndex.row(), 1);
+
+    int taskId = m_model->data(idIndex).toInt();
+    QString currentTitle = m_model->data(titleIndex).toString();
+
     bool ok;
-    QString newTitle = QInputDialog::getText(this,
-                                             "Edycja zadania",
+    QString newTitle = QInputDialog::getText(this, "Edycja zadania",
                                              "Wprowadź nową treść zadania:",
-                                             QLineEdit::Normal,
-                                             currentTitle,
-                                             &ok);
+                                             QLineEdit::Normal, currentTitle, &ok);
 
     if (ok && !newTitle.trimmed().isEmpty()) {
         if (m_dbManager.updateTaskTitle(taskId, newTitle.trimmed())) {
-            refreshTaskList();
+            m_model->select();
         }
     }
 }
+
