@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QListWidgetItem>
+#include <QSortFilterProxyModel>
+#include <QSqlTableModel>
 #include "../database/databasemanager.h"
 
 QT_BEGIN_NAMESPACE
@@ -10,6 +11,32 @@ namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
+
+class TaskModel : public QSqlTableModel {
+public:
+    using QSqlTableModel::QSqlTableModel;
+
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override {
+        QVariant value = QSqlTableModel::data(index, role);
+
+        if (role == Qt::FontRole || role == Qt::ForegroundRole) {
+            QModelIndex statusIndex = this->index(index.row(), 3);
+            bool isCompleted = QSqlTableModel::data(statusIndex, Qt::DisplayRole).toBool();
+
+            if (isCompleted) {
+                if (role == Qt::FontRole) {
+                    QFont font;
+                    font.setStrikeOut(true);
+                    return font;
+                }
+                if (role == Qt::ForegroundRole) {
+                    return QColor(Qt::gray);
+                }
+            }
+        }
+        return value;
+    }
+};
 
 class MainWindow : public QMainWindow
 {
@@ -28,11 +55,12 @@ private slots:
 
     void on_cbDarkMode_toggled(bool checked);
 
-    void onTaskDoubleClicked(QListWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;
     DatabaseManager m_dbManager;
-    void refreshTaskList();
+
+    TaskModel *m_model;
+    QSortFilterProxyModel *m_proxyModel;
 };
 #endif // MAINWINDOW_H

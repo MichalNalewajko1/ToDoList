@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->btnDeleteTask, &QPushButton::clicked, this, &MainWindow::on_btnDeleteTask_clicked);
     connect(ui->btnCompleteTask, &QPushButton::clicked, this, &MainWindow::on_btnCompleteTask_clicked);
     connect(ui->cbDarkMode, &QCheckBox::toggled, this, &MainWindow::on_cbDarkMode_toggled);
-    connect(ui->listWidget, &QListWidget::itemDoubleClicked, this, &MainWindow::onTaskDoubleClicked);
+    connect(ui->listView, &QListWidget::itemDoubleClicked, this, &MainWindow::onTaskDoubleClicked);
     on_cbDarkMode_toggled(false);
     refreshTaskList();
 }
@@ -42,7 +42,7 @@ void MainWindow::on_btnAddTask_clicked()
 }
 
 void MainWindow::refreshTaskList() {
-    ui->listWidget->clear();
+    ui->listView->clear();
 
     QVector<Task> tasks = m_dbManager.getAllTasks();
     for (const Task &task : tasks) {
@@ -54,13 +54,13 @@ void MainWindow::refreshTaskList() {
             item->setFont(font);
             item->setForeground(Qt::gray);
         }
-        ui->listWidget->addItem(item);
+        ui->listView->addItem(item);
     }
 }
 
 void MainWindow::on_btnDeleteTask_clicked()
 {
-    QListWidgetItem *selectedItem = ui->listWidget->currentItem();
+    QListWidgetItem *selectedItem = ui->listView->currentItem();
 
     if (!selectedItem) {
         return;
@@ -76,7 +76,7 @@ void MainWindow::on_btnDeleteTask_clicked()
 
 void MainWindow::on_btnCompleteTask_clicked()
 {
-    QListWidgetItem *selectedItem = ui->listWidget->currentItem();
+    QListWidgetItem *selectedItem = ui->listView->currentItem();
 
     if (!selectedItem) {
         return;

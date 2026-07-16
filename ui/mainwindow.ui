@@ -30,14 +30,21 @@
      </layout>
     </item>
     <item>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="placeholderText">
+       <string>Szukaj zadania...</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="listView"/>
+    </item>
+    <item>
      <widget class="QCheckBox" name="cbDarkMode">
       <property name="text">
        <string>Tryb Ciemny</string>
       </property>
      </widget>
-    </item>
-    <item>
-     <widget class="QListWidget" name="listWidget"/>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
