@@ -30,7 +30,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="inputSearch">
       <property name="placeholderText">
        <string>Szukaj zadania...</string>
       </property>

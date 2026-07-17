@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->listView->setModel(m_proxyModel);
     ui->listView->setModelColumn(1);
 
+    on_cbDarkMode_toggled(ui->cbDarkMode->isChecked());
+
 }
 MainWindow::~MainWindow()
 {
@@ -79,7 +81,7 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
         this->setStyleSheet(
             "QMainWindow { background-color: #1e1e2e; }"
             "#cbDarkMode { color: #cdd6f4; }"
-            "#inputTaskTitle {"
+            "#inputTaskTitle, #inputSearch {"
             "   padding: 8px; border: 1px solid #45475a; border-radius: 4px;"
             "   background-color: #313244; color: #cdd6f4; font-size: 14px;"
             "}"
@@ -102,7 +104,7 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
             "QMainWindow { background-color: #f4f5f7; }"
             "#cbDarkMode { color: #333333; }"
 
-            "#inputTaskTitle {"
+            "#inputTaskTitle, #inputSearch {"
             "   padding: 8px; border: 1px solid #ced4da; border-radius: 4px;"
             "   background-color: white; color: black; font-size: 14px;"
             "}"
