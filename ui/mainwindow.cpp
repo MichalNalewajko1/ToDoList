@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_model = new TaskModel(this);
     m_model->setTable("tasks");
     m_model->select();
+    updateTaskProgress();
 
     m_proxyModel = new QSortFilterProxyModel(this);
     m_proxyModel->setSourceModel(m_model);
@@ -43,6 +44,7 @@ void MainWindow::on_btnAddTask_clicked()
     if (m_dbManager.addTask(newTask)) {
         ui->inputTaskTitle->clear();
         m_model->select();
+        updateTaskProgress();
     }
 }
 
@@ -58,6 +60,7 @@ void MainWindow::on_btnCompleteTask_clicked() {
 
     if (m_dbManager.completeTask(taskId)) {
         m_model->select();
+        updateTaskProgress();
     }
 }
 
@@ -72,6 +75,7 @@ void MainWindow::on_btnDeleteTask_clicked() {
 
     if (m_dbManager.deleteTask(taskId)) {
         m_model->select();
+        updateTaskProgress();
     }
 }
 
@@ -98,6 +102,13 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
             "}"
             "QListView::item { padding: 8px; border-bottom: 1px solid #45475a; }"
             "QListView::item:selected { background-color: #45475a; color: #ffffff; }"
+            "QProgressBar {"
+            "   background-color: #313244;" // <-- DODAJ TĘ LINIJKĘ (ciemne tło paska)
+            "   border: 1px solid #45475a; border-radius: 4px; text-align: center; color: #cdd6f4;"
+            "}"
+            "QProgressBar::chunk {"
+            "   background-color: #a6e3a1; border-radius: 2px;"
+            "}"
             );
     } else {
         this->setStyleSheet(
@@ -123,6 +134,12 @@ void MainWindow::on_cbDarkMode_toggled(bool checked)
             "}"
             "QListView::item { padding: 8px; border-bottom: 1px solid #eee; }"
             "QListView::item:selected { background-color: #e2e6ea; color: black; }"
+            "QProgressBar {"
+            "   border: 1px solid #ced4da; border-radius: 4px; text-align: center; color: black;"
+            "}"
+            "QProgressBar::chunk {"
+            "   background-color: #28a745; border-radius: 2px;"
+            "}"
             );
     }
 
@@ -153,7 +170,28 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     if (ok && !newTitle.trimmed().isEmpty()) {
         if (m_dbManager.updateTaskTitle(taskId, newTitle.trimmed())) {
             m_model->select();
+            updateTaskProgress();
         }
     }
 }
 
+void MainWindow::updateTaskProgress() {
+    int totalTasks = m_model->rowCount();
+
+    if (totalTasks == 0) {
+        ui->progressBar->setValue(0);
+        return;
+    }
+
+    int completedTasks = 0;
+    for (int i = 0; i < totalTasks; ++i) {
+        // Kolumna 3 w naszej bazie to "is_completed"
+        QModelIndex statusIndex = m_model->index(i, 3);
+        if (m_model->data(statusIndex).toBool()) {
+            completedTasks++;
+        }
+    }
+
+    int percentage = (completedTasks * 100) / totalTasks;
+    ui->progressBar->setValue(percentage);
+}

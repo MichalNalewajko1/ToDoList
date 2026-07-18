@@ -65,5 +65,7 @@ private:
 
     TaskModel *m_model;
     QSortFilterProxyModel *m_proxyModel;
+
+    void updateTaskProgress();
 };
 #endif // MAINWINDOW_H
