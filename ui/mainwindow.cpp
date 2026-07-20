@@ -20,11 +20,16 @@ MainWindow::MainWindow(QWidget *parent)
     m_proxyModel->setSourceModel(m_model);
     m_proxyModel->setFilterKeyColumn(1);
     m_proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    m_proxyModel->sort(3, Qt::AscendingOrder);
+    m_proxyModel->setDynamicSortFilter(true);
 
     ui->listView->setModel(m_proxyModel);
     ui->listView->setModelColumn(1);
 
     on_cbDarkMode_toggled(ui->cbDarkMode->isChecked());
+
+    ui->btnCompleteTask->setEnabled(false);
+    ui->btnDeleteTask->setEnabled(false);
 
 }
 MainWindow::~MainWindow()
@@ -45,6 +50,8 @@ void MainWindow::on_btnAddTask_clicked()
         ui->inputTaskTitle->clear();
         m_model->select();
         updateTaskProgress();
+
+        ui->inputTaskTitle->setFocus();
     }
 }
 
@@ -61,6 +68,8 @@ void MainWindow::on_btnCompleteTask_clicked() {
     if (m_dbManager.completeTask(taskId)) {
         m_model->select();
         updateTaskProgress();
+        ui->btnCompleteTask->setEnabled(false);
+        ui->btnDeleteTask->setEnabled(false);
     }
 }
 
@@ -76,6 +85,8 @@ void MainWindow::on_btnDeleteTask_clicked() {
     if (m_dbManager.deleteTask(taskId)) {
         m_model->select();
         updateTaskProgress();
+        ui->btnCompleteTask->setEnabled(false);
+        ui->btnDeleteTask->setEnabled(false);
     }
 }
 
@@ -195,3 +206,12 @@ void MainWindow::updateTaskProgress() {
     int percentage = (completedTasks * 100) / totalTasks;
     ui->progressBar->setValue(percentage);
 }
+
+void MainWindow::on_listView_clicked(const QModelIndex &index)
+{
+    if(index.isValid()){
+        ui->btnCompleteTask->setEnabled(true);
+        ui->btnDeleteTask->setEnabled(true);
+    }
+}
+
