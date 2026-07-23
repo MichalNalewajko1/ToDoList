@@ -7,7 +7,7 @@ Nowoczesna, stacjonarna aplikacja do zarządzania zadaniami napisana w języku *
 ## 🚀 Główne Funkcje
 
 * **Pełny cykl CRUD:** Dodawanie, przeglądanie, oznaczanie jako ukończone oraz usuwanie zadań z automatyczną synchronizacją w bazie **SQLite**.
-* **Filtrowanie i Sortowanie w czasie rzeczywistym:** Płynne wyszukiwanie zadań po nazwie oraz automatyczne spspychanie wykonanych zadań na dół listy za pomocą `QSortFilterProxyModel`.
+* **Filtrowanie i Sortowanie w czasie rzeczywistym:** Płynne wyszukiwanie zadań po nazwie oraz automatyczne spychanie wykonanych zadań na dół listy za pomocą `QSortFilterProxyModel`.
 * **Dynamiczny Pasek Postępu:** Automatyczne przeliczanie i wizualizacja procentowego wykonania planu zadań w oparciu o analizę stanu modelu.
 * **Customowe Stylizowanie Komórek (Subclassing):** Własny model `TaskModel` dziedziczący po `QSqlTableModel`, który dynamicznie modyfikuje wygląd komórek (przekreślenie czcionki, zmiana koloru na szary) na podstawie ról Qt (`Qt::FontRole`, `Qt::ForegroundRole`).
 * **Przełącznik Motywów:** Obsługa trybu ciemnego (Dark Mode) oraz jasnego zmodyfikowanego za pomocą arkuszy stylów Qt CSS (QSS).
